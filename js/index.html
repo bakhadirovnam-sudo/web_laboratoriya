@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Talabalar Jadvali (Sodda)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f6fc;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .form-box {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    input {
+      padding: 10px;
+      margin: 5px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    .action-btn {
+      margin: 2px;
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .edit {
+      background-color: #f39c12;
+      color: white;
+      border: none;
+    }
+    .save {
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎓 Talabalar Jadvali</h1>
+
+  <div class="form-box">
+    <input type="text" id="fio" placeholder="F.I.O kiriting">
+    <input type="text" id="fakultet" placeholder="Fakultet kiriting">
+    <button id="addBtn">Qo‘shish</button>
+  </div>
+
+  <table id="studentsTable">
+    <thead>
+      <tr>
+        <th>№</th>
+        <th>F.I.O</th>
+        <th>Fakultet</th>
+        <th>Action</th>
+        <th>Ma'lumotlari</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- yangi qatorlar shu yerga qo‘shiladi -->
+    </tbody>
+  </table>
+
+  <!-- jQuery ulaymiz -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      let counter = 1;
+      let editIndex = null; // tahrirlanayotgan qator
+
+      // Qo‘shish yoki Saqlash tugmasi bosilganda
+      $("#addBtn").click(function() {
+        let fio = $("#fio").val().trim();
+        let fakultet = $("#fakultet").val().trim();
+
+        if (fio === "" || fakultet === "") {
+          alert("⚠️ Iltimos, FIO va Fakultetni to‘ldiring!");
+          return;
+        }
+
+        // Agar hozirda tahrirlash rejimi yoq bo‘lsa — yangi qator qo‘shiladi
+        if (editIndex === null) {
+          let newRow = `
+            <tr>
+              <td>${counter}</td>
+              <td>${fio}</td>
+              <td>${fakultet}</td>
+              <td>
+                <button class="action-btn edit">✏️ Tahrirlash</button>
+                <button class="action-btn save">💾 O‘rnatish</button>
+              </td>
+            </tr>
+          `;
+          $("#studentsTable tbody").append(newRow);
+          counter++;
+        } else {
+          // tahrirlash rejimi — eski qatorni yangilaymiz
+          let row = $("#studentsTable tbody tr").eq(editIndex);
+          row.find("td:eq(1)").text(fio);
+          row.find("td:eq(2)").text(fakultet);
+
+          editIndex = null;
+          $("#addBtn").text("Qo‘shish");
+        }
+
+        // inputlarni tozalaymiz
+        $("#fio").val("");
+        $("#fakultet").val("");
+      });
+
+      // Tahrirlash tugmasi
+      $(document).on("click", ".edit", function() {
+        editIndex = $(this).closest("tr").index();
+        let row = $(this).closest("tr");
+
+        let fio = row.find("td:eq(1)").text();
+        let fakultet = row.find("td:eq(2)").text();
+
+        $("#fio").val(fio);
+        $("#fakultet").val(fakultet);
+
+        $("#addBtn").text("Saqlash");
+      });
+
+      // O‘rnatish (save) tugmasi — tahrirlangan joyni “tayyor” holatda saqlaydi
+      $(document).on("click", ".save", function() {
+        alert("✅ Ma’lumot o‘rnatildi (hech qanday o‘zgarish yo‘q, faqat demo)");
+      });
+    });
+  </script>
+
+</body>
+</html>
